@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<!--
+  =====================================================
+   KIDS PROJECT #1 : RADAR SCREEN
+  =====================================================
+  This page displays the radar live, using the
+  measurements sent by the Arduino (Kids_Project_1_Radar.ino).
+
+  How to use:
+    1. Upload Kids_Project_1_Radar.ino to the Arduino.
+    2. Close the Arduino IDE (the USB port must be free).
+    3. Open this page with Google Chrome or Microsoft Edge.
+    4. Baud rate: 9600, then "Connect Arduino" -> choose the COM port.
+
+  The "Demo mode" button runs the radar without an Arduino.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arduino Radar - Kids Project #1</title>
+<style>
+  body{margin:0;background:#050b07;color:#3cff6a;font-family:Consolas,monospace;display:flex;flex-direction:column;align-items:center}
+  header{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;padding:12px}
+  button{background:#0d2a15;color:#3cff6a;border:1px solid #3cff6a;padding:8px 14px;font:inherit;cursor:pointer;border-radius:4px}
+  button:hover{background:#164d26}
+  input{background:#0d2a15;color:#3cff6a;border:1px solid #3cff6a;font:inherit;width:60px;padding:3px}
+  h1{margin:10px 0 0;font-size:24px;letter-spacing:3px}
+  #statusEl{font-size:28px;font-weight:bold;padding:8px 24px;border-radius:6px;margin:4px}
+  .clear{background:#0d2a15;color:#3cff6a;border:1px solid #3cff6a}
+  .alert{background:#5a0000;color:#ff4040;border:1px solid #ff4040;animation:blink .4s infinite alternate}
+  @keyframes blink{to{opacity:.55}}
+  #infoEl{font-size:20px;margin:6px}
+  canvas{max-width:98vw;height:auto}
+</style>
+</head>
+<body>
+<h1>ULTRASONIC RADAR</h1>
+<header>
+  <button id="btnConnect">Connect Arduino</button>
+  <label>Baud rate : <select id="baud" style="background:#0d2a15;color:#3cff6a;border:1px solid #3cff6a;font:inherit">
+    <option value="9600" selected>9600</option>
+    <option value="115200">115200</option>
+  </select></label>
+  <button id="btnDemo">Demo mode</button>
+  <label>Threshold (cm) : <input type="number" id="threshold" value="20" min="2" max="200"></label>
+  <label>Display range (cm) : <input type="number" id="displayRange" value="50" min="10" max="400"></label>
+</header>
+<div id="statusEl" class="clear">ALL CLEAR</div>
+<div id="infoEl">Angle : -- deg | Distance : -- cm</div>
+<canvas id="radar" width="1000" height="560"></canvas>
+<div style="width:min(1000px,98vw);margin:8px 0 20px">
+  <div style="font-size:14px">Data received from the Arduino:</div>
+  <pre id="log" style="background:#000;border:1px solid #1d5a2c;padding:8px;height:110px;overflow:hidden;font-size:13px;margin:4px 0">(nothing yet)</pre>
+</div>
+
+<script>
+const cv = document.getElementById('radar');
+const ctx = cv.getContext('2d');
+const statusEl = document.getElementById('statusEl');
+const infoEl = document.getElementById('infoEl');
+const btnConnect = document.getElementById('btnConnect');
+const btnDemo = document.getElementById('btnDemo');
+
+const W = cv.width, H = cv.height;
+const CX = W / 2, CY = H - 40;
+const R = Math.min(W / 2 - 50, H - 80);
+const FADE_MS = 3000;                  // how long a measurement stays on screen (ms)
+const measurements = new Array(181).fill(null);
+let angle = 90, demo = null;
+
+const threshold  = () => +document.getElementById('threshold').value  || 20;
+const displayRange = () => +document.getElementById('displayRange').value || 50;
+
+// Point at a given angle (0 = right, 180 = left) and radius
+function pt(a, r) {
+  const t = a * Math.PI / 180;
+  return [CX + r * Math.cos(t), CY - r * Math.sin(t)];
+}
+
+// New measurement received
+function handleData(a, d) {
+  if (isNaN(a) || isNaN(d) || a < 0 || a > 180) return;
+  angle = a;
+  const now = performance.now();
+  measurements[a] = { d: d, t: now };
+  // fill the next angle too (in case the servo moves 2 deg per step)
+  if (a + 1 <= 180) measurements[a + 1] = { d: d, t: now };
+  infoEl.textContent = 'Angle : ' + a + ' deg | Distance : ' + (d > 0 ? d + ' cm' : 'nothing');
+}
+
+// Read one line sent by the Arduino
+// Accepted formats: "angle,distance"  ou  "Angle : 45 deg  |  Distance : 12 cm"
+const logEl = document.getElementById('log');
+const lastLines = [];
+function readLine(l) {
+  l = l.trim();
+  if (!l) return;
+  lastLines.push(l);
+  if (lastLines.length > 7) lastLines.shift();
+  logEl.textContent = lastLines.join('\n');
+  let m = l.match(/^(\d+)\s*,\s*(\d+)/);
+  if (m) { handleData(parseInt(m[1]), parseInt(m[2])); return; }
+  m = l.match(/Angle\s*:\s*(\d+).*?Distance\s*:\s*(\d+|rien|nothing)/i);
+  if (m) handleData(parseInt(m[1]), ['rien','nothing'].includes(m[2].toLowerCase()) ? 0 : parseInt(m[2]));
+}
+
+function draw() {
+  const now = performance.now(), P = displayRange(), S = threshold();
+  ctx.fillStyle = '#050b07';
+  ctx.fillRect(0, 0, W, H);
+
+  // Keep the alert 1.2 s after the last detection (avoids flickering)
+  let isAlert = false;
+  for (let a = 0; a <= 180; a++) {
+    const m = measurements[a];
+    if (m && now - m.t < 1200 && m.d > 0 && m.d < S) { isAlert = true; break; }
+  }
+  const cls = isAlert ? 'alert' : 'clear';
+  if (statusEl.className !== cls) {
+    statusEl.className = cls;
+    statusEl.textContent = isAlert ? 'OBSTACLE DETECTED' : 'ALL CLEAR';
+  }
+
+  // Detected zones and points
+  for (let a = 0; a <= 180; a++) {
+    const m = measurements[a];
+    if (!m) continue;
+    const age = now - m.t;
+    if (age > FADE_MS) continue;
+    const alpha = 1 - age / FADE_MS;
+
+    if (m.d > 0 && m.d < S) {
+      // red zone: the whole sector at this angle
+      ctx.fillStyle = 'rgba(255,30,30,' + (0.55 * alpha) + ')';
+      ctx.beginPath();
+      ctx.moveTo(CX, CY);
+      ctx.arc(CX, CY, R, -(a + 0.7) * Math.PI / 180, -(a - 0.7) * Math.PI / 180);
+      ctx.closePath();
+      ctx.fill();
+    }
+    if (m.d > 0 && m.d <= P) {
+      const [x, y] = pt(a, m.d / P * R);
+      ctx.fillStyle = m.d < S ? 'rgba(255,70,70,' + alpha + ')' : 'rgba(60,255,106,' + alpha + ')';
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  }
+
+  // Distance circles
+  ctx.strokeStyle = '#3cff6a';
+  ctx.fillStyle = '#3cff6a';
+  ctx.lineWidth = 1.5;
+  ctx.font = '14px Consolas, monospace';
+  ctx.textAlign = 'center';
+  for (let i = 1; i <= 4; i++) {
+    const r = R * i / 4;
+    ctx.beginPath();
+    ctx.arc(CX, CY, r, Math.PI, 2 * Math.PI);
+    ctx.stroke();
+    ctx.fillText(Math.round(P * i / 4) + ' cm', CX + r, CY + 20);
+  }
+
+  // Threshold circle (red dashed)
+  if (S <= P) {
+    ctx.setLineDash([6, 6]);
+    ctx.strokeStyle = '#ff4040';
+    ctx.beginPath();
+    ctx.arc(CX, CY, S / P * R, Math.PI, 2 * Math.PI);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Angle lines
+  ctx.strokeStyle = 'rgba(60,255,106,0.45)';
+  ctx.fillStyle = '#3cff6a';
+  for (let a = 0; a <= 180; a += 30) {
+    const [x, y] = pt(a, R);
+    ctx.beginPath();
+    ctx.moveTo(CX, CY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    const [lx, ly] = pt(a, R + 22);
+    ctx.fillText(a + '°', lx, ly + 5);
+  }
+
+  // Sweep line
+  const [sx, sy] = pt(angle, R);
+  ctx.strokeStyle = '#3cff6a';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = '#3cff6a';
+  ctx.shadowBlur = 14;
+  ctx.beginPath();
+  ctx.moveTo(CX, CY);
+  ctx.lineTo(sx, sy);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// Connect to the Arduino (Web Serial: Chrome or Edge)
+btnConnect.onclick = async () => {
+  if (!('serial' in navigator)) {
+    infoEl.textContent = 'Please open this page with Google Chrome or Microsoft Edge.';
+    return;
+  }
+  try {
+    const port = await navigator.serial.requestPort();
+    await port.open({ baudRate: +document.getElementById('baud').value });
+    logEl.textContent = 'Connected. Waiting for data (2-3 s)...';
+    stopDemo();
+    btnConnect.textContent = 'Arduino connected';
+    const reader = port.readable.pipeThrough(new TextDecoderStream()).getReader();
+    let buffer = '';
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += value;
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      lines.forEach(readLine);
+    }
+  } catch (e) {
+    infoEl.textContent = 'Error : ' + e.message + ' (close the Arduino IDE Serial Monitor)';
+  }
+};
+
+// Demo mode (no Arduino needed)
+function stopDemo() {
+  if (demo) { clearInterval(demo); demo = null; btnDemo.textContent = 'Demo mode'; }
+}
+btnDemo.onclick = () => {
+  if (demo) { stopDemo(); return; }
+  let a = 10, dir = 1;
+  demo = setInterval(() => {
+    let d = 0;
+    if (a > 60 && a < 80) d = 12;
+    else if (a > 120 && a < 135) d = 35;
+    handleData(a, d);
+    a += dir;
+    if (a >= 170 || a <= 10) dir = -dir;
+  }, 30);
+  btnDemo.textContent = 'Stop demo';
+};
+</script>
+</body>
+</html>
