@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="1000" height="620" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    
+    <g id="gnd" stroke="#840000" stroke-width="2">
+      <line x1="-12" y1="0" x2="12" y2="0"/>
+      <line x1="-8" y1="5" x2="8" y2="5"/>
+      <line x1="-4" y1="10" x2="4" y2="10"/>
+    </g>
+    
+    <g id="vcc">
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#840000" stroke-width="2"/>
+      <text x="0" y="-6" text-anchor="middle" font-size="12" font-weight="bold" fill="#840000">+5V</text>
+    </g>
+  </defs>
+
+  <rect width="1000" height="620" fill="#ffffff"/>
+  <rect x="10" y="10" width="980" height="600" fill="none" stroke="#840000" stroke-width="1.5"/>
+
+  <g stroke="#008400" stroke-width="2" fill="none">
+    
+    
+    <polyline points="260,175 290,175 290,125"/>
+    <line x1="260" y1="200" x2="350" y2="200"/>
+    <line x1="260" y1="240" x2="350" y2="240"/>
+    <polyline points="260,265 300,265 300,300"/>
+    
+    <polyline points="260,380 280,380 280,350"/>
+    <line x1="260" y1="410" x2="350" y2="410"/>
+    <polyline points="260,440 270,440 270,480"/>
+    
+    <line x1="480" y1="110" x2="480" y2="110"/>
+    
+    <line x1="610" y1="220" x2="650" y2="220"/>
+    <line x1="710" y1="220" x2="760" y2="220"/>
+    <polyline points="784,220 840,220 840,250"/>
+    
+    <line x1="610" y1="320" x2="650" y2="320"/>
+    <line x1="710" y1="320" x2="760" y2="320"/>
+    <polyline points="784,320 840,320 840,350"/>
+  </g>
+
+  
+  <use href="#vcc" x="290" y="125"/>
+  <use href="#vcc" x="280" y="350"/>
+  <use href="#vcc" x="480" y="110"/>
+  <use href="#gnd" x="300" y="300"/>
+  <use href="#gnd" x="270" y="480"/>
+  <use href="#gnd" x="480" y="490"/>
+  <use href="#gnd" x="840" y="250"/>
+  <use href="#gnd" x="840" y="350"/>
+
+  
+  <g stroke="#840000" stroke-width="2">
+    <line x1="350" y1="200" x2="380" y2="200"/>
+    <line x1="350" y1="240" x2="380" y2="240"/>
+    <line x1="350" y1="410" x2="380" y2="410"/>
+    <line x1="580" y1="220" x2="610" y2="220"/>
+    <line x1="580" y1="320" x2="610" y2="320"/>
+    <line x1="480" y1="110" x2="480" y2="140"/>
+    <line x1="480" y1="460" x2="480" y2="490"/>
+  </g>
+  <rect x="380" y="140" width="200" height="320" fill="#ffffc2" stroke="#840000" stroke-width="2"/>
+  <text x="380" y="132" font-size="13" font-weight="bold" fill="#006464">U1</text>
+  <text x="480" y="300" text-anchor="middle" font-size="15" font-weight="bold" fill="#840000">ARDUINO UNO</text>
+  <text x="480" y="318" text-anchor="middle" font-size="11" fill="#840000">ATmega328P</text>
+  <g font-size="12" fill="#840000">
+    <text x="388" y="204">D7</text>
+    <text x="388" y="244">D8</text>
+    <text x="388" y="414">D10 ~</text>
+    <text x="572" y="224" text-anchor="end">~ D5</text>
+    <text x="572" y="324" text-anchor="end">~ D6</text>
+    <text x="480" y="158" text-anchor="middle">5V</text>
+    <text x="480" y="452" text-anchor="middle">GND</text>
+  </g>
+  <g font-size="10" fill="#006464">
+    <text x="365" y="195" text-anchor="middle">7</text>
+    <text x="365" y="235" text-anchor="middle">8</text>
+    <text x="365" y="405" text-anchor="middle">10</text>
+    <text x="595" y="215" text-anchor="middle">5</text>
+    <text x="595" y="315" text-anchor="middle">6</text>
+  </g>
+
+  
+  <g stroke="#840000" stroke-width="2">
+    <line x1="230" y1="175" x2="260" y2="175"/>
+    <line x1="230" y1="200" x2="260" y2="200"/>
+    <line x1="230" y1="240" x2="260" y2="240"/>
+    <line x1="230" y1="265" x2="260" y2="265"/>
+  </g>
+  <rect x="100" y="150" width="130" height="140" fill="#ffffc2" stroke="#840000" stroke-width="2"/>
+  <circle cx="135" cy="195" r="16" fill="none" stroke="#840000" stroke-width="2"/>
+  <circle cx="135" cy="245" r="16" fill="none" stroke="#840000" stroke-width="2"/>
+  <text x="135" y="199" text-anchor="middle" font-size="9" fill="#840000">T</text>
+  <text x="135" y="249" text-anchor="middle" font-size="9" fill="#840000">R</text>
+  <g font-size="11" fill="#840000" text-anchor="end">
+    <text x="224" y="179">VCC</text>
+    <text x="224" y="204">TRIG</text>
+    <text x="224" y="244">ECHO</text>
+    <text x="224" y="269">GND</text>
+  </g>
+  <text x="100" y="142" font-size="13" font-weight="bold" fill="#006464">U2</text>
+  <text x="165" y="306" text-anchor="middle" font-size="12" fill="#006464">HC-SR04 (ultrasonic)</text>
+
+  
+  <g stroke="#840000" stroke-width="2">
+    <line x1="230" y1="380" x2="260" y2="380"/>
+    <line x1="230" y1="410" x2="260" y2="410"/>
+    <line x1="230" y1="440" x2="260" y2="440"/>
+  </g>
+  <rect x="100" y="360" width="130" height="100" fill="#ffffc2" stroke="#840000" stroke-width="2"/>
+  <circle cx="140" cy="410" r="22" fill="#ffffff" stroke="#840000" stroke-width="2"/>
+  <text x="140" y="417" text-anchor="middle" font-size="20" font-weight="bold" fill="#840000">M</text>
+  <g font-size="11" fill="#840000" text-anchor="end">
+    <text x="224" y="384">V+</text>
+    <text x="224" y="414">PWM</text>
+    <text x="224" y="444">GND</text>
+  </g>
+  <text x="100" y="352" font-size="13" font-weight="bold" fill="#006464">M1</text>
+  <text x="165" y="476" text-anchor="middle" font-size="12" fill="#006464">Servo SG90</text>
+
+  
+  <rect x="650" y="212" width="60" height="16" fill="#ffffc2" stroke="#840000" stroke-width="2"/>
+  <text x="680" y="204" text-anchor="middle" font-size="12" font-weight="bold" fill="#006464">R1</text>
+  <text x="680" y="246" text-anchor="middle" font-size="11" fill="#006464">220 Ω</text>
+  <polygon points="760,208 760,232 784,220" fill="#ffc8c8" stroke="#840000" stroke-width="2"/>
+  <line x1="784" y1="208" x2="784" y2="232" stroke="#840000" stroke-width="2"/>
+  <g stroke="#840000" stroke-width="1.5" fill="#840000">
+    <line x1="774" y1="204" x2="786" y2="192"/><polygon points="786,192 780,194 784,198"/>
+    <line x1="782" y1="207" x2="794" y2="195"/><polygon points="794,195 788,197 792,201"/>
+  </g>
+  <text x="772" y="250" text-anchor="middle" font-size="12" font-weight="bold" fill="#006464">D1</text>
+  <text x="772" y="264" text-anchor="middle" font-size="11" fill="#006464">Red LED</text>
+
+  
+  <rect x="650" y="312" width="60" height="16" fill="#ffffc2" stroke="#840000" stroke-width="2"/>
+  <text x="680" y="304" text-anchor="middle" font-size="12" font-weight="bold" fill="#006464">R2</text>
+  <text x="680" y="346" text-anchor="middle" font-size="11" fill="#006464">220 Ω</text>
+  <polygon points="760,308 760,332 784,320" fill="#c8f0d0" stroke="#840000" stroke-width="2"/>
+  <line x1="784" y1="308" x2="784" y2="332" stroke="#840000" stroke-width="2"/>
+  <g stroke="#840000" stroke-width="1.5" fill="#840000">
+    <line x1="774" y1="304" x2="786" y2="292"/><polygon points="786,292 780,294 784,298"/>
+    <line x1="782" y1="307" x2="794" y2="295"/><polygon points="794,295 788,297 792,301"/>
+  </g>
+  <text x="772" y="350" text-anchor="middle" font-size="12" font-weight="bold" fill="#006464">D2</text>
+  <text x="772" y="364" text-anchor="middle" font-size="11" fill="#006464">Green LED</text>
+
+  
+  <g stroke="#840000" stroke-width="1.5" fill="none">
+    <rect x="640" y="500" width="350" height="110"/>
+    <line x1="640" y1="535" x2="990" y2="535"/>
+    <line x1="640" y1="560" x2="990" y2="560"/>
+    <line x1="640" y1="585" x2="990" y2="585"/>
+    <line x1="840" y1="560" x2="840" y2="610"/>
+  </g>
+  <text x="815" y="523" text-anchor="middle" font-size="15" font-weight="bold" fill="#840000">Kids Project #1 - Arduino Radar</text>
+  <text x="650" y="552" font-size="12" fill="#006464">Electrical schematic</text>
+  <text x="650" y="577" font-size="11" fill="#006464">Author : Malek Chihi</text>
+  <text x="850" y="577" font-size="11" fill="#006464">Rev : 1.0</text>
+  <text x="650" y="602" font-size="11" fill="#006464">Date : 2026-11-19</text>
+  <text x="850" y="602" font-size="11" fill="#006464">Sheet : 1/1</text>
+</svg>
